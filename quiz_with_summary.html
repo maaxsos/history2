@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Психологічний тест</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+    #quiz-container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      font-size: 1.2em;
+    }
+    .question-screen { display: none; }
+    .question-screen.active { display: block; }
+    .options {
+      margin: 20px 0;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+    }
+    .options button:hover {
+      background: #eee;
+    }
+    .options button:disabled {
+      cursor: not-allowed;
+    }
+    .correct {
+      background: #4CAF50 !important;
+      color: #fff;
+    }
+    .incorrect {
+      background: #f44336 !important;
+      color: #fff;
+    }
+    #result-screen { display: none; }
+    #result-screen.active { display: block; }
+    .summary {
+      margin-top: 20px;
+    }
+    .summary-item {
+      margin-bottom: 15px;
+    }
+    .summary-item.correct { color: green; }
+    .summary-item.incorrect { color: red; }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <div class="question-screen active" data-question="1" data-correct="Париж">
+      <h2>1. Яка столиця Франції?</h2>
+      <div class="options">
+        <button>Париж</button>
+        <button>Лондон</button>
+        <button>Берлін</button>
+        <button>Рим</button>
+      </div>
+    </div>
+
+    <div class="question-screen" data-question="2" data-correct="4">
+      <h2>2. Скільки буде 2+2?</h2>
+      <div class="options">
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>22</button>
+      </div>
+    </div>
+
+    <div class="question-screen" data-question="3" data-correct="Фіолетовий">
+      <h2>3. Який колір не є первинним?</h2>
+      <div class="options">
+        <button>Червоний</button>
+        <button>Синій</button>
+        <button>Жовтий</button>
+        <button>Фіолетовий</button>
+      </div>
+    </div>
+
+    <div id="result-screen">
+      <h2>Результат</h2>
+      <p id="result-text"></p>
+      <div class="summary" id="summary-list"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      let currentQuestionIndex = 0;
+      let score = 0;
+      const questions = document.querySelectorAll('.question-screen');
+      const resultScreen = document.getElementById('result-screen');
+      const resultText = document.getElementById('result-text');
+      const summaryList = document.getElementById('summary-list');
+      const userAnswers = [];
+
+      questions.forEach((questionSection, index) => {
+        const options = questionSection.querySelectorAll('button');
+        const correctAnswer = questionSection.getAttribute('data-correct');
+        const questionNumber = questionSection.getAttribute('data-question');
+        const questionText = questionSection.querySelector('h2').innerText;
+
+        options.forEach(button => {
+          button.addEventListener('click', () => {
+            if (!questionSection.classList.contains('answered')) {
+              questionSection.classList.add('answered');
+
+              const selectedAnswer = button.innerText;
+              const isCorrect = selectedAnswer === correctAnswer;
+              userAnswers.push({
+                question: questionText,
+                selected: selectedAnswer,
+                correct: correctAnswer,
+                isCorrect: isCorrect
+              });
+
+              if (isCorrect) {
+                button.classList.add('correct');
+                score++;
+              } else {
+                button.classList.add('incorrect');
+                const correctButton = Array.from(options).find(btn => btn.innerText === correctAnswer);
+                if (correctButton) {
+                  correctButton.classList.add('correct');
+                }
+              }
+
+              options.forEach(btn => btn.disabled = true);
+
+              setTimeout(() => {
+                questionSection.classList.remove('active');
+                if (index + 1 < questions.length) {
+                  questions[index + 1].classList.add('active');
+                } else {
+                  resultText.textContent = 'Правильних відповідей: ' + score + ' з ' + questions.length;
+
+                  userAnswers.forEach((ans, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'summary-item ' + (ans.isCorrect ? 'correct' : 'incorrect');
+                    item.innerHTML = `<strong>Питання ${i + 1}:</strong> ${ans.question}<br>
+                    Ваша відповідь: ${ans.selected}<br>
+                    Правильна відповідь: ${ans.correct}`;
+                    summaryList.appendChild(item);
+                  });
+
+                  resultScreen.classList.add('active');
+                }
+              }, 2000);
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
