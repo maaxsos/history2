@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест на знання</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      font-size: 18px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      margin-bottom: 25px;
+    }
+    .question p {
+      font-weight: bold;
+    }
+    .answer {
+      display: block;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f9f9f9;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .answer:hover {
+      background: #e9e9e9;
+    }
+    .correct {
+      background-color: #d4edda;
+      color: green;
+    }
+    .incorrect {
+      background-color: #f8d7da;
+      color: red;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Міні-тест</h1>
+
+    <div class="question" data-correct="C">
+      <p>1. Яка столиця Франції?</p>
+      <div class="answer">A. Рим</div>
+      <div class="answer">B. Берлін</div>
+      <div class="answer">C. Париж</div>
+      <div class="answer">D. Мадрид</div>
+    </div>
+
+    <div class="question" data-correct="B">
+      <p>2. Скільки буде 2 + 2?</p>
+      <div class="answer">A. 3</div>
+      <div class="answer">B. 4</div>
+      <div class="answer">C. 5</div>
+      <div class="answer">D. 6</div>
+    </div>
+
+    <div class="question" data-correct="D">
+      <p>3. Який колір не є первинним?</p>
+      <div class="answer">A. Червоний</div>
+      <div class="answer">B. Синій</div>
+      <div class="answer">C. Жовтий</div>
+      <div class="answer">D. Фіолетовий</div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.question').forEach(question => {
+      const correctLetter = question.getAttribute('data-correct');
+      const answers = question.querySelectorAll('.answer');
+      answers.forEach(answer => {
+        answer.addEventListener('click', () => {
+          answers.forEach(a => a.classList.remove('correct', 'incorrect'));
+          const selected = answer.textContent.trim().charAt(0);
+          if (selected === correctLetter) {
+            answer.classList.add('correct');
+          } else {
+            answer.classList.add('incorrect');
+            answers.forEach(a => {
+              if (a.textContent.trim().charAt(0) === correctLetter) {
+                a.classList.add('correct');
+              }
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
